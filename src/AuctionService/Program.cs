@@ -34,4 +34,5 @@ catch (Exception ex)
 {
     Console.WriteLine($"Error migrating database: {ex.Message}");
 }
+
 app.Run();
