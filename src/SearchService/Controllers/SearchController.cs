@@ -30,9 +30,17 @@ public class SearchController : ControllerBase
         {
             var query = DB.PagedSearch<Item, Item>();
 
-            // Full-text search
+            // Full-text search and fallback property-based search
             if (!string.IsNullOrEmpty(searchParams.SearchTerm))
+            {
                 query.Match(Search.Full, searchParams.SearchTerm).SortByTextScore();
+                // Fallback: also match against Model, Make, Color directly (case-insensitive, contains)
+                query.Match(i =>
+                    i.Make.ToLower().Contains(searchParams.SearchTerm.ToLower()) ||
+                    i.Model.ToLower().Contains(searchParams.SearchTerm.ToLower()) ||
+                    i.Color.ToLower().Contains(searchParams.SearchTerm.ToLower())
+                );
+            }
 
             // Sorting (support asc/desc)
             ApplySorting(query, searchParams.OrderBy, searchParams.Descending);
@@ -67,7 +75,7 @@ public class SearchController : ControllerBase
 
             return Ok(new
             {
-                result = result.Results,
+                results = result.Results,
                 pageCount = result.PageCount,
                 totalCount = result.TotalCount,
             });

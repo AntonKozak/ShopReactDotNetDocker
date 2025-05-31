@@ -5,6 +5,10 @@ using AuctionService.Entities;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 
+using Contracts;
+
+using MassTransit;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,8 +20,10 @@ public class AuctionsController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly AuctionDbContext _context;
-    public AuctionsController(AuctionDbContext context, IMapper mapper)
+    private readonly IPublishEndpoint _publishEndpoint;
+    public AuctionsController(AuctionDbContext context, IMapper mapper, IPublishEndpoint publishEndpoint)
     {
+        _publishEndpoint = publishEndpoint;
         _context = context;
         _mapper = mapper;
 
@@ -60,10 +66,14 @@ public class AuctionsController : ControllerBase
         var auction = _mapper.Map<Auction>(createAuctionDto);
 
         _context.Auctions.Add(auction);
+
+        var newAuction = _mapper.Map<AuctionDto>(auction);
+        await _publishEndpoint.Publish(_mapper.Map<AuctionCreatedContract>(newAuction));
+
         await _context.SaveChangesAsync();
 
-        var createdAuctionDto = _mapper.Map<AuctionDto>(auction);
-        return CreatedAtAction(nameof(GetAuctionById), new { id = createdAuctionDto.Id }, createdAuctionDto);
+
+        return CreatedAtAction(nameof(GetAuctionById), new { id = auction.Id }, newAuction);
     }
 
     [HttpPut("{id}")]
@@ -85,9 +95,14 @@ public class AuctionsController : ControllerBase
         auction.Item.Color = updateAuctionDto.Color ?? auction.Item.Color;
 
         _context.Auctions.Update(auction);
+        var updatedAuctionDto = _mapper.Map<AuctionDto>(auction);
+        await _publishEndpoint.Publish(_mapper.Map<AuctionUpdatedContract>(updatedAuctionDto));
         var result = await _context.SaveChangesAsync() > 0;
 
-        if (result) return NoContent();
+        if (result)
+        {
+            return NoContent();
+        }
 
         return StatusCode(500, "An error occurred while updating the auction.");
 
@@ -104,9 +119,13 @@ public class AuctionsController : ControllerBase
         }
 
         _context.Auctions.Remove(auction);
+        await _publishEndpoint.Publish(new AuctionDeletedContract { Id = auction.Id.ToString() });
         var result = await _context.SaveChangesAsync() > 0;
 
-        if (result) return NoContent();
+        if (result)
+        {
+            return NoContent();
+        }
 
         return StatusCode(500, "An error occurred while deleting the auction.");
     }
