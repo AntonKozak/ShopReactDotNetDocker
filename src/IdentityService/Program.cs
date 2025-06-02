@@ -1,7 +1,12 @@
 using System.Globalization;
 using System.Text;
+
 using Duende.IdentityServer.Licensing;
+
 using IdentityService;
+
+using Npgsql;
+
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -25,13 +30,20 @@ try
 
     // this seeding is only for the template to bootstrap the DB and users.
     // in production you will likely want a different approach.
-    if (args.Contains("/seed"))
+
+    try
     {
+
         Log.Information("Seeding database...");
         SeedData.EnsureSeedData(app);
-        Log.Information("Done seeding database. Exiting.");
-        return;
+        Log.Information("Database seeded successfully.");
     }
+    catch (System.Exception)
+    {
+        Log.Error("An error occurred while seeding the database. Please ensure the database is set up correctly.");
+        throw;
+    }
+
 
     if (app.Environment.IsDevelopment())
     {

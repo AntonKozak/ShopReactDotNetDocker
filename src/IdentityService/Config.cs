@@ -14,13 +14,24 @@ public static class Config
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
         {
-            new ApiScope("scope1"),
+            new ApiScope("AuctionService", "Auction Service API Full Access"),
             new ApiScope("scope2"),
+            new ApiScope("scope1", "Scope 1 for M2M Client"),
         };
 
     public static IEnumerable<Client> Clients =>
         new Client[]
         {
+            new Client
+            {
+                ClientId = "postman",
+                ClientName = "Postman",
+                AllowedScopes = { "openid", "profile", "AuctionService" },
+                RedirectUris = { "https://www.getpostman.com/oauth2/callback" },
+                ClientSecrets = [new Secret("NotASecret".Sha256())],
+                AllowedGrantTypes = {GrantType.ResourceOwnerPassword}
+            },
+
             // m2m client credentials flow client
             new Client
             {
@@ -28,7 +39,7 @@ public static class Config
                 ClientName = "Client Credentials Client",
 
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
-                ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
+                ClientSecrets = { new Secret("NotASecret".Sha256()) },
 
                 AllowedScopes = { "scope1" }
             },
