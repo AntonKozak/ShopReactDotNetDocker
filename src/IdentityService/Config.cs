@@ -26,10 +26,23 @@ public static class Config
             {
                 ClientId = "postman",
                 ClientName = "Postman",
-                AllowedScopes = { "openid", "profile", "AuctionService" },
+                AllowedScopes = { "openid", "profile", "AuctionService", "auctionApp" },
                 RedirectUris = { "https://www.getpostman.com/oauth2/callback" },
                 ClientSecrets = [new Secret("NotASecret".Sha256())],
                 AllowedGrantTypes = {GrantType.ResourceOwnerPassword}
+            },
+
+            new Client
+            {
+                ClientId = "nextApp",
+                ClientName = "Next App",
+                ClientSecrets = { new Secret("secret".Sha256()) },
+                AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                RequirePkce = false,
+                RedirectUris = { "http://localhost:3000/api//auth/callback/id-server" },
+                AllowOfflineAccess = true,
+                AllowedScopes = { "openid", "profile", "AuctionService", "scope2", "scope1", "offline_access" },
+                AccessTokenLifetime = 3600*24*30 // 30 days,
             },
 
             // m2m client credentials flow client
