@@ -1,4 +1,5 @@
 using Duende.IdentityServer.Models;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -39,7 +40,7 @@ public static class Extensions
     /// </summary>
     internal static bool IsRemote(this ConnectionInfo connection)
     {
-        var localAddresses = new List<string?> { "127.0.0.1", "::1" };
+        var localAddresses = new List<string?> { "127.0.0.1", "::1", "::ffff:172.18.0.1", "::ffff:172.18.0.5" };
         if (connection.LocalIpAddress != null)
         {
             localAddresses.Add(connection.LocalIpAddress.ToString());
