@@ -12,12 +12,14 @@
   "dependencies": {
     "flowbite-react": "^0.11.7",
     "next": "15.3.3",
+    "query-string": "^9.2.0",
     "react": "^19.0.0",
     "react-countdown": "^2.3.6",
     "react-dom": "^19.0.0",
     "react-icon": "^1.0.0",
     "react-icons": "^5.5.0",
-    "zeropad": "^1.1.0"
+    "zeropad": "^1.1.0",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

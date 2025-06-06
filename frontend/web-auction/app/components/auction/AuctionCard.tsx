@@ -1,7 +1,7 @@
 import { Auction } from '@/app/types';
 import Link from 'next/link';
-import CarImage from '../CarImage';
-import CountdownTimer from '../CountdownTimer';
+import CarImage from './CarImage';
+import CountdownTimer from './CountdownTimer';
 
 type Props = {
   auction: Auction;
