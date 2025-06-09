@@ -1,3 +1,5 @@
+using Duende.IdentityServer;
+
 using IdentityService.Data;
 using IdentityService.Models;
 using IdentityService.Services;
@@ -46,17 +48,25 @@ internal static class HostingExtensions
         {
             options.Cookie.SameSite = SameSiteMode.Lax;
         });
-        builder.Services.AddAuthentication();
-        // .AddGoogle(options =>
-        // {
-        //     options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-
-        //     // register your IdentityServer with Google at https://console.developers.google.com
-        //     // enable the Google+ API
-        //     // set the redirect URI to https://localhost:5001/signin-google
-        //     options.ClientId = "copy client ID from Google here";
-        //     options.ClientSecret = "copy client secret from Google here";
-        // });
+        builder.Services.AddAuthentication()
+            .AddGoogle(options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "";
+                options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
+            })
+            .AddFacebook(options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                options.AppId = builder.Configuration["Authentication:Facebook:AppId"] ?? "";
+                options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"] ?? "";
+            })
+            .AddGitHub(options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"] ?? "";
+                options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"] ?? "";
+            });
 
         return builder.Build();
     }

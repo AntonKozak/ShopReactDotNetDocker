@@ -39,10 +39,11 @@ public static class Config
                 ClientSecrets = { new Secret("secret".Sha256()) },
                 AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                 RequirePkce = false,
-                RedirectUris = { "http://localhost:3000/api//auth/callback/id-server" },
+                RedirectUris = { "http://localhost:3000/api/auth/callback/id-server" },
                 AllowOfflineAccess = true,
                 AllowedScopes = { "openid", "profile", "AuctionService", "scope2", "scope1", "offline_access" },
-                AccessTokenLifetime = 3600*24*30 // 30 days,
+                AccessTokenLifetime = 3600*24*30, // 30 days,
+                AlwaysIncludeUserClaimsInIdToken = true,
             },
 
             // m2m client credentials flow client
