@@ -5,10 +5,10 @@ import { Auction, PagedResult } from '@/app/types';
 import queryString from 'query-string';
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
-import { getData } from '../../actions/auctionsActions';
-import EmptyFilter from '../EmptyFilter';
-import Filters from '../navbar/Filters';
-import PaginationPage from '../Pagination';
+import { getData } from '../actions/auctionsActions';
+import EmptyFilter from '../components/navbar/EmptyFilter';
+import Filters from '../components/navbar/Filters';
+import PaginationPage from '../components/Pagination';
 import AuctionCard from './AuctionCard';
 
 export default function Listning() {
@@ -21,6 +21,8 @@ export default function Listning() {
       searchTerm: state.searchTerm,
       orderBy: state.orderBy,
       filterBy: state.filterBy,
+      seller: state.seller,
+      winner: state.winner,
     }))
   );
   const setParams = useParamsStore(useShallow((state) => state.setParams));

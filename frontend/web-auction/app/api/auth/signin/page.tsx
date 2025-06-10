@@ -1,4 +1,4 @@
-import EmptyFilter from '@/app/components/EmptyFilter';
+import EmptyFilter from '@/app/components/navbar/EmptyFilter';
 
 export default function SignIn({
   searchParams,

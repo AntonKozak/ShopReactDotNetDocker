@@ -1,10 +1,8 @@
-import Listning from './components/auction/Listning';
-import FilterSort from './components/navbar/FilterSort';
+import Listning from './auction/Listning';
 
 export default function Home() {
   return (
     <div>
-      <FilterSort />
       <Listning />
     </div>
   );

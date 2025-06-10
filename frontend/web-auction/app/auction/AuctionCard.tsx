@@ -1,7 +1,7 @@
 import { Auction } from '@/app/types';
 import Link from 'next/link';
-import CarImage from './CarImage';
-import CountdownTimer from './CountdownTimer';
+import CarImage from '../components/CarImage';
+import CountdownTimer from '../components/CountdownTimer';
 
 type Props = {
   auction: Auction;
@@ -9,7 +9,7 @@ type Props = {
 
 export default function AuctionCard({ auction }: Props) {
   return (
-    <Link href={`/auctions/details/${auction.id}`}>
+    <Link href={`/auction/details/${auction.id}`}>
       <div className='relative w-full bg-gray-200 aspect-[16/10] rounded-lg overflow-hidden'>
         <CarImage
           key={auction.id}
