@@ -10,7 +10,6 @@ namespace SearchService.Controllers;
 
 using Microsoft.Extensions.Logging;
 
-using static SearchService.Controllers.SearchControllerHelpers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -22,10 +21,19 @@ public class SearchController : ControllerBase
     {
         _logger = logger;
     }
-
     [HttpGet]
     public async Task<ActionResult<List<Item>>> SearchItems([FromQuery] SearchParams searchParams)
     {
+        _logger.LogInformation("=== SEARCH REQUEST DEBUG ===");
+        _logger.LogInformation("Raw FilterBy: '{FilterBy}' (Length: {Length})",
+            searchParams.FilterBy ?? "NULL",
+            (searchParams.FilterBy ?? "").Length);
+        _logger.LogInformation("Is FilterBy null or empty: {IsNullOrEmpty}",
+            string.IsNullOrEmpty(searchParams.FilterBy));
+        _logger.LogInformation("OrderBy: '{OrderBy}'", searchParams.OrderBy ?? "NULL");
+        _logger.LogInformation("PageNumber: {PageNumber}, PageSize: {PageSize}",
+            searchParams.PageNumber, searchParams.PageSize);
+
         var query = DB.PagedSearch<Item, Item>();
 
         if (!string.IsNullOrEmpty(searchParams.SearchTerm))
@@ -44,8 +52,9 @@ public class SearchController : ControllerBase
         query = searchParams.FilterBy switch
         {
             "finished" => query.Match(x => x.AuctionEnd < DateTime.UtcNow),
-            "endingSoon" => query.Match(x => x.AuctionEnd < DateTime.UtcNow.AddHours(6)
-                && x.AuctionEnd > DateTime.UtcNow),
+            "endingSoon" => query.Match(x => x.AuctionEnd > DateTime.UtcNow
+                && x.AuctionEnd <= DateTime.UtcNow.AddHours(6)),
+            "live" => query.Match(x => x.AuctionEnd > DateTime.UtcNow),
             _ => query.Match(x => x.AuctionEnd > DateTime.UtcNow),
         };
 
@@ -63,6 +72,8 @@ public class SearchController : ControllerBase
         query.PageSize(searchParams.PageSize);
 
         var result = await query.ExecuteAsync();
+
+        _logger.LogInformation("Query returned {Count} results", result.Results.Count);
 
         return Ok(new
         {

@@ -4,7 +4,7 @@ WORKDIR /app
 COPY ShopReactDotNetDocker.sln ./
 COPY src/SearchService/SearchService.csproj ./src/SearchService/
 COPY src/Contracts/Contracts.csproj ./src/Contracts/
-
+COPY src/BiddingService/BiddingService.csproj ./src/BiddingService/
 
 RUN dotnet restore ./src/SearchService/SearchService.csproj
 

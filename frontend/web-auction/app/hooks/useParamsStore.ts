@@ -6,7 +6,7 @@ type State = {
   pageCount: number;
   searchTerm: string;
   orderBy: string;
-  filterBy?: string;
+  filterBy: string;
   seller?: string;
   winner?: string;
 };

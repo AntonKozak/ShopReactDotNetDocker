@@ -34,15 +34,21 @@ export default function Listning() {
     { skipEmptyString: true }
   );
 
+  console.log('Raw params before query string:', params);
+  console.log('Generated URL after query string:', url);
+
   function setPageNumber(pageNumber: number) {
     setParams({ pageNumber });
   }
-
   useEffect(() => {
+    console.log('=== FRONTEND DEBUG ===');
+    console.log('Params object:', params);
+    console.log('Generated URL:', url);
+    console.log('FilterBy value:', params.filterBy);
     getData(url).then((data) => {
       setData(data);
     });
-  }, [url]);
+  }, [url, params]);
 
   if (!data) return <h3>Loading ...</h3>;
 
