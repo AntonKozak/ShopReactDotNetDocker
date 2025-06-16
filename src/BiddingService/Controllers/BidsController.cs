@@ -2,6 +2,7 @@ using AutoMapper;
 
 using BiddingService.DTOs;
 using BiddingService.Models;
+using BiddingService.Services;
 
 using Contracts;
 
@@ -21,8 +22,10 @@ public class BidsController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IPublishEndpoint _publishEndpoint;
-    public BidsController(IMapper mapper, IPublishEndpoint publishEndpoint)
+    private readonly GrpcAuctionClient _grpcAuctionClient;
+    public BidsController(IMapper mapper, IPublishEndpoint publishEndpoint, GrpcAuctionClient grpcAuctionClient)
     {
+        _grpcAuctionClient = grpcAuctionClient;
         _publishEndpoint = publishEndpoint;
         _mapper = mapper;
     }
@@ -37,7 +40,12 @@ public class BidsController : ControllerBase
 
         if (auction == null)
         {
-            return NotFound("Auction not found.");
+            auction = _grpcAuctionClient.GetAuction(auctionId);
+            if (auction == null)
+            {
+                return BadRequest("Auction not found.");
+            }
+
         }
 
         if (auction.Seller == User.Identity?.Name)
