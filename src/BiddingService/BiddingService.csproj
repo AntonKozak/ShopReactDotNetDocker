@@ -10,7 +10,7 @@
     <PackageReference Include="Google.Protobuf" Version="3.31.1" />
     <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
     <PackageReference Include="Grpc.Tools" Version="2.72.0" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.0-develop.2305" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.0-develop.2309" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
     <PackageReference Include="MongoDB.Entities" Version="24.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
