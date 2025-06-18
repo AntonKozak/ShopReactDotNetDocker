@@ -1,18 +1,19 @@
 'use client';
 
 import { useParamsStore } from '@/app/hooks/useParamsStore';
-import { Auction, PagedResult } from '@/app/types';
-import queryString from 'query-string';
+import qs from 'query-string';
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { getData } from '../actions/auctionsActions';
 import EmptyFilter from '../components/navbar/EmptyFilter';
 import Filters from '../components/navbar/Filters';
 import PaginationPage from '../components/Pagination';
+import { useAuctionStore } from '../hooks/useAuctionStore';
 import AuctionCard from './AuctionCard';
 
 export default function Listning() {
-  const [data, setData] = useState<PagedResult<Auction>>();
+  const [loading, setLoading] = useState(true);
+
   const params = useParamsStore(
     useShallow((state) => ({
       pageNumber: state.pageNumber,
@@ -25,32 +26,34 @@ export default function Listning() {
       winner: state.winner,
     }))
   );
-  const setParams = useParamsStore(useShallow((state) => state.setParams));
-  const url = queryString.stringifyUrl(
-    {
-      url: '',
-      query: params,
-    },
-    { skipEmptyString: true }
+
+  const data = useAuctionStore(
+    useShallow((state) => ({
+      auctions: state.auctions,
+      totalCount: state.totalCount,
+      pageCount: state.pageCount,
+    }))
   );
 
-  console.log('Raw params before query string:', params);
-  console.log('Generated URL after query string:', url);
+  const setData = useAuctionStore((state) => state.setData);
+  const setParams = useParamsStore((state) => state.setParams);
+  const url = qs.stringifyUrl(
+    { url: '', query: params },
+    { skipEmptyString: true }
+  );
 
   function setPageNumber(pageNumber: number) {
     setParams({ pageNumber });
   }
+
   useEffect(() => {
-    console.log('=== FRONTEND DEBUG ===');
-    console.log('Params object:', params);
-    console.log('Generated URL:', url);
-    console.log('FilterBy value:', params.filterBy);
     getData(url).then((data) => {
       setData(data);
+      setLoading(false);
     });
-  }, [url, params]);
+  }, [url, setData]);
 
-  if (!data) return <h3>Loading ...</h3>;
+  if (loading) return <h3>Loading...</h3>;
 
   return (
     <>
@@ -59,17 +62,17 @@ export default function Listning() {
         <EmptyFilter showReset />
       ) : (
         <>
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4'>
+          <div className='grid grid-cols-4 gap-6'>
             {data &&
-              data.results.map((auction) => (
+              data.auctions.map((auction) => (
                 <AuctionCard key={auction.id} auction={auction} />
               ))}
           </div>
-          <div className='flex justify-center items-center mt-4'>
+          <div className='flex justify-center mt-4'>
             <PaginationPage
+              onPageChange={setPageNumber}
               currentPage={params.pageNumber}
               pageCount={data.pageCount}
-              onPageChange={setPageNumber}
             />
           </div>
         </>

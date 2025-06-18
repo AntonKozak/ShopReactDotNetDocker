@@ -94,16 +94,14 @@ public class BidsController : ControllerBase
     public async Task<ActionResult<List<BidDto>>> GetBidsForAuction(string auctionId)
     {
         var bids = await DB.Find<Bid>()
-            .Match(b => b.AuctionId == auctionId)
-            .Sort(b => b.Descending(b => b.BidTime))
+            .Match(a => a.AuctionId == auctionId)
+            .Sort(b => b.Descending(a => a.BidTime))
             .ExecuteAsync();
 
-        if (bids == null || !bids.Any())
-        {
-            return NotFound("No bids found for this auction.");
-        }
+        if (bids == null)
+            return NotFound("No bids found for this auction. GetBidsForAuction BiddsController");
 
-        return bids.Select(_mapper.Map<BidDto>).ToList();
+        return Ok(bids.Select(_mapper.Map<BidDto>).ToList());
     }
 
 
