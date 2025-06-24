@@ -32,11 +32,8 @@ internal static class HostingExtensions
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
+                options.IssuerUri = builder.Configuration["IssuerUri"];
 
-                if (builder.Environment.IsEnvironment("Docker"))
-                {
-                    options.IssuerUri = "http://localhost:5001";
-                }
             })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)

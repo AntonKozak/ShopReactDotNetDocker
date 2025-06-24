@@ -19,7 +19,7 @@ public static class Config
             new ApiScope("scope1", "Scope 1 for M2M Client"),
         };
 
-    public static IEnumerable<Client> Clients =>
+    public static IEnumerable<Client> Clients(IConfiguration configuration) =>
         new Client[]
         {
             new Client
@@ -39,7 +39,7 @@ public static class Config
                 ClientSecrets = { new Secret("secret".Sha256()) },
                 AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                 RequirePkce = false,
-                RedirectUris = { "http://localhost:3000/api/auth/callback/id-server" },
+                RedirectUris = {configuration["ClientApp"] + "/api/auth/callback/id-server" },
                 AllowOfflineAccess = true,
                 AllowedScopes = { "openid", "profile", "AuctionService", "scope2", "scope1", "offline_access" },
                 AccessTokenLifetime = 3600*24*30, // 30 days,
